@@ -1,25 +1,43 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+// "proxy":"http://localhost:8800/api/",
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 export default function Register() {
+
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     username: "",
     email: "",
     password: "",
   });
 
+
   const handleChange = (e) => {
-    setInputs(prev => {
+    setInputs((prev) => {
       return {
         ...prev,
-        [e.target.name]:e.target.value
+        [e.target.name]: e.target.value,
       };
-    })
+    });
+
+    setError(null);
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  } 
+
+    try {
+      const res = await axios.post(
+        "http://localhost:8800/api/auth/register",
+        inputs
+      );
+      navigate("/login");
+    } catch (err) {
+      setError(err.response.data);
+    }
+  };
 
   return (
     <div className="auth">
@@ -53,7 +71,7 @@ export default function Register() {
           onChange={handleChange}
         />
         <button onClick={handleSubmit}>Register</button>
-        <p>This is an error!</p>
+        {error && <p>{error}</p>}
         <span>
           Do you have an account? <Link to="/login">Login</Link>
         </span>
