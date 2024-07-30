@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import axios from "axios"
 const posts = [
     {
       id: 1,
@@ -26,7 +28,22 @@ const posts = [
   ];
 
 
-export default function Menu() {
+export default function Menu(props) {
+  const {cat} = props;
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8800/api/posts?cat=${cat}`);
+        setPosts(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, [cat]);
   return (
     <div className="menu">
         <h1>Other posts you may like</h1>
